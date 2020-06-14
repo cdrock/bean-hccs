@@ -233,6 +233,9 @@ void main(int initround, monster foe, string page) {
             use_skill(1, $skill[Shattering Punch]);
         } else if (have_skill($skill[Gingerbread Mob Hit]) && !get_property_boolean("_gingerbreadMobHitUsed")) {
             use_skill(1, $skill[Gingerbread Mob Hit]);
+        } else if (available_amount($item[replica bat-oomerang]) > 0 && get_property_int('_usedReplicaBatoomerang') < 3) {
+            m_new()
+                .m_item($item[replica bat-oomerang]);
         }
     } else if (mode == MODE_KILL) {
         if (foe == desired) {
@@ -264,11 +267,6 @@ void main(int initround, monster foe, string page) {
                 .m_skill($skill[Sing Along])
                 .m_skill($skill[Saucegeyser])
                 .m_repeat_submit();
-        } else if (my_familiar() == $familiar[Frumious Bandersnatch]
-                && have_effect($effect[Ode to Booze]) > 0
-                && get_property_int("_banderRunaways") < my_familiar_weight() / 5) {
-            runaway();
-            set_property_int("_banderRunaways", get_property_int("_banderRunaways") + 1);
         } else if (have_skill($skill[Reflex Hammer]) && get_property_int("_reflexHammerUsed") < 3) {
             use_skill(1, $skill[Reflex Hammer]);
         } else if (my_mp() >= 50 && have_skill($skill[Snokebomb]) && get_property_int("_snokebombUsed") < 3) {
@@ -310,6 +308,14 @@ void adventure_kill(location loc) {
     set_hccs_combat_mode(MODE_KILL);
     adv1(loc, -1, "");
     set_hccs_combat_mode(MODE_NULL);
+}
+
+void adventure_kill(string url) {
+    set_hccs_combat_mode(MODE_KILL);
+    print(url);
+    visit_url(url, false);
+    run_combat();
+    set_hccs_combat_mode(MODE_NULL, '');
 }
 
 void adventure_kill(location loc, monster foe) {
